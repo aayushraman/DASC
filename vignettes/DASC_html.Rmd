@@ -1,0 +1,158 @@
+---
+title: "DASC user guide"
+author: 
+- name: Haidong Yi*
+  affiliation: College of Computer and Control Engineering, Nankai University, Tianjin, China
+  email: 1210674@mail.nankai.edu.cn
+- name: Ayush T. Raman*
+  affiliation: Baylor College of Medicine, Houston, TX, USA
+- name: Han Zhang
+  affiliation: College of Computer and Control Engineering, Nankai University, Tianjin, China
+- name: Genevera I. Allen USA
+  affiliation: Department of Statistics, Rice University, TX, USA
+- name: Zhandong Liu
+  affiliation: Baylor College of Medicine, Houston, TX, USA
+date: '`r doc_date()`'
+output:
+  BiocStyle::html_document2:
+    toc_float: yes
+abstract: |
+  Batch effects are one of the major source of technical variations that affect the measurements in high throughput studies such as omics profiling. It has been well established that batch effects can be caused by different experimental platforms, laboratory conditions, different sources of samples and personnel differences. These differences can confound the outcomes of interest and lead to spurious results. A critical input for batch correction algorithms is the knowledge of batch factors, which in many cases are unknown or inaccurate. Hence, the primary motivation of our paper is to detect hidden batch factors that can be used in standard techniques to accurately capture the relationship between expression and other modeled variables of interest. Here, we present `r Biocpkg("DASC")`, a novel algorithm that is based on convex clustering and semi-NMF for the detection of unknown batch effects.
+vignette: |
+  %\VignetteIndexEntry{DASC user guide} 
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8} 
+  %\VignetteKeywords{BatchEffects, RNASeq, GeneExpression, Normalization, Preprocessing, QualityControl, StatisticalMethod}
+---
+
+<br>
+**Package**: `r Rpackage("DASC")`<br />
+**Authors**: `r packageDescription("DASC")[["Author"]]` <br />
+**Version**: `r packageDescription("DASC")[["Version"]]`<br />
+**Compiled date**: `r Sys.Date()`<br />
+**License**: `r packageDescription("DASC")[["License"]]`<br />
+**Prerequisites**: NMF, cvxclustr, Biobase <br />
+
+```{r style, echo = FALSE, results = 'asis'}
+BiocStyle::markdown()
+```
+
+```{r setup, echo=FALSE, warning=FALSE}
+library(knitr)
+set.seed(42)
+opts_chunk$set(comment=NA,
+               fig.align="center",
+               warning=FALSE)
+```
+
+# Getting started
+
+`r Biocpkg("DASC")` is an R package distributed as part of the [Bioconductor](http://bioconductor.org) project. To install the package, start R and enter:
+
+```{r installation, eval=FALSE}
+source("http://bioconductor.org/biocLite.R")
+biocLite("DASC")
+```
+
+Also, make sure to that `r CRANpkg("NMF")`, `r CRANpkg("cvxclustr")` and `r Biocpkg("Biobase")` are installed in your system before running `r Biocpkg("DASC")`. 
+
+Once `r Rpackage("DASC")` is installed, it can be loaded to the R enviornment by the following command.
+
+```{r loadlibrary, message=FALSE}
+library("DASC")
+```
+
+# Introduction
+
+`r Biocpkg("DASC")` is used for identifying batches in a and classifying samples into different batches in a high dimensional gene   expression dataset. The batch information can be further used as a covariate in conjunction with other variables of interest among standard bioinformatics analysis like differential expression analysis.
+
+## Citation info
+
+If you use `r Biocpkg("DASC")` for your analysis, please cite it as here below:
+
+To cite package ‘DASC’ in publications use:
+
+<br>
+    Haidong Yi, Ayush T. Raman, Han Zhang, Genevera I. Allen and Zhandong Liu (2017).
+    **DASC: Detecting hidden batch factors through data adaptive adjustment for biological      effects.** R package version 0.1.0. <br />
+
+# Setting up the data
+The first step in using cvxbatch package is to properly format the data. For example, in case of gene expression data, it should be a matrix with features (genes, transcripts, voxels) in the rows and samples in the columns. cvxbatch then requires the information for the variable of interest to model the gene expression data effectively. For example, variable of interest could be a genotype or treatment information. Below is an example of Stanford dataset (Chen et. al. PNAS, 2015; Gilad et. al. F1000 Research, 2015).
+
+```{r, message=FALSE}
+
+## Libraries
+library("NMF")
+library("cvxclustr")
+
+## filtered raw counts data from Gilad et al. F1000 Research
+## i.e filtering out lower 30% + mitochondrial genes
+data("rawCounts")
+data("datasets")
+
+## Using a smaller dataset
+idx <- which(datasets$tissue %in% c("adipose", "adrenal", "brain", "pancreas", "spleen", "small_bowel"))
+rawCounts <- rawCounts[,idx]
+datasets <- datasets[idx,]
+
+## raw counts
+head(rawCounts)
+dim(rawCounts)
+
+## metadata
+head(datasets)
+dim(datasets)
+```
+
+# Batch detection using PCA Analysis
+
+```{r, message=FALSE}
+
+## Normalizing the dataset using DESeq2
+library(DESeq2)
+library(ggplot2)
+dds <- DESeqDataSetFromMatrix(rawCounts, datasets, design = ~ species + tissue)
+dds <- estimateSizeFactors(dds)
+dat <- counts(dds, normalized = TRUE)
+rld.dds <- rlog(dds) ## this step will take some time
+lognormalizedCounts <- log2(dat + 1)
+
+## PCA plot using 
+library(pcaExplorer)
+pcaplot(rld.dds, intgroup = c("tissue", "species"), ntop = 1000, pcX = 1, 
+          pcY = 2, title = "PCA suggesting batch")
+```
+
+The PCA plot PC1 shows the differences between the tissues and PC2 shows the differences between the species i.e. samples clustering based on species.
+
+# Batch detection using DASC
+
+```{r, fig.width=8, fig.height=6}
+res <- convexBatch(edata = dat, pdata = datasets, factor = datasets$tissue,  
+                   method='ama', type = 3, lambda = 1, rank = 2:10, nrun = 50, 
+                   annotation='Stanford Dataset')
+
+## Consensus plot
+consensusmap(res)
+
+## Residual plot
+plot(res)
+
+## Batches -- dataset has 6 batches
+sample.clust <- data.frame(sample.name = colnames(lognormalizedCounts), 
+                            clust = as.vector(predict(res$fit$`6`)), 
+                            batch = datasets$seqBatch)
+ggplot(data = sample.clust, aes(x = c(1:12), y = clust, color = factor(clust))) +  
+  geom_point(size = 3) + xlab("Sample Number") + ylab("Cluster Number")
+```
+
+Based on the above plots, we observe that the dataset has 6 batches. This can further be compared with the sequencing platform or `datasets$seqBatch`, which suggest that difference in platform led to batch effects. Batch number can be used as another covariate, when the differential expression analyses are performed.
+
+# More Examples
+We are currently working on vignette and will be uploading more examples soon.
+
+# Session Info
+```{r, message=FALSE}
+sessionInfo()
+```
+
