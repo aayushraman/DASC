@@ -4,6 +4,7 @@
 #' @param n number of samples
 #' @return \code{w} the vector of the adjacency matrix
 #' @author Haidong Yi, Ayush T. Raman
+#'
 #' @export
 #' @examples
 #' W = matrix(c(0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0),nrow=4)
@@ -126,9 +127,6 @@ getclass <- function(ADJ) {
 #' @import Biobase
 #' @import cvxclustr
 #' @import NMF
-#' @import DESeq2
-#' @import ggplot2
-#' @import pcaExplorer
 #' @export
 #' @author Haidong Yi, Ayush T. Raman
 #'
@@ -136,8 +134,7 @@ getclass <- function(ADJ) {
 #' the detailed algorithm
 #'
 
-convexBatch <- function(edata, pdata, factor, method = "ama", type = 3, lambda, rank, nrun, spanning = FALSE, 
-    annotation) {
+convexBatch <- function(edata, pdata, factor, method = "ama", type = 3, lambda, rank, nrun, spanning = FALSE, annotation) {
     if (!is.null(type) && !(type %in% c(1, 2, 3))) 
         stop("type must be '1', '2', '3', or NULL")
     if (!is.null(method) && !(method %in% c("ama", "admm"))) 

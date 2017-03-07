@@ -11,3 +11,4 @@ Detecting hidden batch factors through data adaptive shrinkage and clustering (D
 \author{
 Haidong Yi, Ayush T. Raman
 }
+\keyword{package}

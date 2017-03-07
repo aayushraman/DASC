@@ -11,8 +11,8 @@ Encoding: UTF-8
 LazyData: true
 biocViews: BatchEffect, RNASeq, GeneExpression, Normalization, Preprocessing, QualityControl, StatisticalMethod
 RoxygenNote: 6.0.1
-Imports: NMF, cvxclustr, Biobase, DESeq2, ggplot2, pcaExplorer
-Suggests: BiocStyle, knitr, rmarkdown
+Imports: NMF, cvxclustr, Biobase
+Suggests: BiocStyle, knitr, rmarkdown, DESeq2, ggplot2, pcaExplorer
 VignetteBuilder: knitr
 NeedsCompilation: no
 
