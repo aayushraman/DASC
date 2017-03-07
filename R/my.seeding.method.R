@@ -1,6 +1,6 @@
 #'  Initialization of the semi-NMF
 #'
-#'
+#' @import NMF
 #' @param model Object of class: NMFfit
 #' @param target gene expression matrix
 #' @return \code{model} The initial objective of class: NMFfit

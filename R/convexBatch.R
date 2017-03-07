@@ -122,6 +122,7 @@ getclass <- function(ADJ) {
 #' @param spanning parameter is assigned as false
 #' @param annotation An annotation of the dataset
 #' @return outputs the result of semi-NMF. It classifies each sample to its batch factor.
+#'
 #' @import Biobase
 #' @import cvxclustr
 #' @import NMF
@@ -130,6 +131,7 @@ getclass <- function(ADJ) {
 #' @import pcaExplorer
 #' @export
 #' @author Haidong Yi, Ayush T. Raman
+#'
 #' @seealso \code{\link[cvxclustr]{cvxclust_path_ama}} and \code{\link[cvxclustr]{cvxclust_path_admm}} for
 #' the detailed algorithm
 #'
@@ -161,7 +163,7 @@ convexBatch <- function(edata, pdata, factor, method = "ama", type = 3, lambda, 
             ADJ = getclass(ADJ)
         }
         w = W_toVector(ADJ, nrow(ADJ))
-        sol = cvxclust(edata, w, lambda, method = method, type = type)
+        sol = cvxclustr::cvxclust(edata, w, lambda, method = method, type = type)
         Bdata = edata - sol$U[[1]]
     }
     
@@ -176,11 +178,11 @@ convexBatch <- function(edata, pdata, factor, method = "ama", type = 3, lambda, 
     pdata <- new("AnnotatedDataFrame", data = pdata, varMetadata = metadata)
     
     # get the ExpressionSet Class data for NMF calculate
-    DataSet <- ExpressionSet(assayData = edata, phenoData = pdata, annotation = annotation)
+    DataSet <- Biobase::ExpressionSet(assayData = edata, phenoData = pdata, annotation = annotation)
     
     # Remark: In windows, the nrun > 1 will be crashed, So I recommend to use mac os x or linux to run the
     # code in R
-    data.nmf <- nmf(DataSet, rank, my.algorithm, nrun = nrun, .opt = "v", objective = my_objective_function, 
-        seed = my.seeding.method, mixed = TRUE)
+    data.nmf <- NMF::nmf(DataSet, rank, my.algorithm, nrun = nrun, .opt = "v", objective = my_objective_function, 
+                            seed = my.seeding.method, mixed = TRUE)
     return(data.nmf)
 }

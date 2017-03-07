@@ -1,5 +1,6 @@
 #' Main function of semi-NMF
 #'
+#' @import NMF
 #' @param target gene expression matrix
 #' @param model Object of class: NMFfit
 #' @param iternum Number of iterations

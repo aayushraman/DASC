@@ -4,6 +4,7 @@
 #' @return \code{adjacency} Adjacency matrix of \code{colDataBATCH}
 #' @export
 #' @author Haidong Yi, Ayush T. Raman
+#'
 #' @examples
 #' batch.factor = c(rep('human',13),rep('mouse',13))
 #' batch.factor = as.factor(batch.factor)
