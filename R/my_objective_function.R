@@ -1,8 +1,9 @@
 #' Get the error of Semi-NMF
 #'
 #' @details
-#' This is a customerized function defined in terms of \code{\link[NMF]{nmf}}. For more information,
-#' please go through the NMF vignette \url{https://cran.r-project.org/web/packages/NMF/vignettes/NMF-vignette.pdf}
+#' This is a customerized function defined in terms of \code{\link[NMF]{nmf}}. 
+#' For more information, please go through the NMF vignette 
+#' \url{https://cran.r-project.org/web/packages/NMF/vignettes/NMF-vignette.pdf}
 #'
 #' @import NMF
 #' @param model Object of class: NMFfit
@@ -12,7 +13,7 @@
 #' @author Haidong Yi, Ayush T. Raman
 
 my_objective_function <- function(model, target) {
-    F <- NMF::basis(model)
+    H <- NMF::basis(model)
     G <- t(coef(model))
-    norm((target - F %*% t(G)), "f")
+    norm((target - H %*% t(G)), type = "f")
 }

@@ -31,8 +31,9 @@ updateG <- function(X, mf, mg) {
     GFFN <- mg %*% GFFN
     for (i in 1:n) {
         for (j in 1:k) {
-            G[i, j] <- mg[i, j] * sqrt((0.5 * (abs(XF[i, j]) + XF[i, j]) + GFFN[i, j])/(0.5 * (abs(XF[i, 
-                j]) - XF[i, j]) + GFFP[i, j]))
+            G[i, j] <- mg[i, j] * sqrt((0.5 * (abs(XF[i, j]) + XF[i, j]) + 
+                                GFFN[i,j])/(0.5*(abs(XF[i,j]) - XF[i, j]) + 
+                                GFFP[i,j]))
         }
     }
     G

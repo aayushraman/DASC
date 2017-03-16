@@ -2,12 +2,14 @@
 title: "DASC user guide"
 author: 
 - name: Haidong Yi*
-  affiliation: College of Computer and Control Engineering, Nankai University, Tianjin, China
+  affiliation: College of Computer and Control Engineering, Nankai University, 
+             Tianjin, China
   email: 1210674@mail.nankai.edu.cn
 - name: Ayush T. Raman*
   affiliation: Baylor College of Medicine, Houston, TX, USA
 - name: Han Zhang
-  affiliation: College of Computer and Control Engineering, Nankai University, Tianjin, China
+  affiliation: College of Computer and Control Engineering, Nankai University, 
+             Tianjin, China
 - name: Genevera I. Allen USA
   affiliation: Department of Statistics, Rice University, TX, USA
 - name: Zhandong Liu
@@ -17,169 +19,257 @@ output:
   BiocStyle::html_document2:
     toc_float: yes
 abstract: |
-  Batch effects are one of the major source of technical variations that affect the measurements in high throughput studies such as omics profiling. It has been well established that batch effects can be caused by different experimental platforms, laboratory conditions, different sources of samples and personnel differences. These differences can confound the outcomes of interest and lead to spurious results. A critical input for batch correction algorithms is the knowledge of batch factors, which in many cases are unknown or inaccurate. Hence, the primary motivation of our paper is to detect hidden batch factors that can be used in standard techniques to accurately capture the relationship between expression and other modeled variables of interest. Here, we present `r Biocpkg("DASC")`, a novel algorithm that is based on convex clustering and semi-NMF for the detection of unknown batch effects.
+    Batch effects are one of the major source of technical variations in high 
+    throughput studies such as omics profiling. It has been well established 
+    that batch effects can be caused by different experimental platforms, 
+    laboratory conditions, different sources of samples and personnel 
+    differences. These differences can confound the outcomes of interest and 
+    lead to spurious results. A critical input for batch correction algorithms 
+    are the knowledge of batch factors, which in many cases are unknown or 
+    inaccurate. Hence, the primary motivation of our paper is to detect 
+    hidden batch factors that can be used in standard techniques to 
+    accurately capture the relationship between expression and other 
+    modeled variables of interest. Here, we present `r Biocpkg("DASC")`, 
+    a novel algorithm that is based on convex clustering and semi-NMF for 
+    the detection of unknown batch effects.
 vignette: |
   %\VignetteIndexEntry{DASC user guide} 
   %\VignetteEngine{knitr::rmarkdown} 
   %\VignetteEncoding{UTF-8} 
-  %\VignetteKeywords{BatchEffects, RNASeq, GeneExpression, Normalization, Preprocessing, QualityControl, StatisticalMethod}
+  %\VignetteKeywords{BatchEffects, RNASeq, GeneExpression, 
+    Normalization, Preprocessing, QualityControl, StatisticalMethod}
 ---
-
+  
 <br>
-**Package**: `r Rpackage("DASC")`<br />
-**Authors**: `r packageDescription("DASC")[["Author"]]` <br />
-**Version**: `r packageDescription("DASC")[["Version"]]`<br />
-**Compiled date**: `r Sys.Date()`<br />
-**License**: `r packageDescription("DASC")[["License"]]`<br />
-**Prerequisites**: NMF, cvxclustr, Biobase <br />
-
+    **Package**: `r Rpackage("DASC")`<br />
+    **Authors**: `r packageDescription("DASC")[["Author"]]` <br />
+    **Version**: `r packageDescription("DASC")[["Version"]]`<br />
+    **Compiled date**: `r Sys.Date()`<br />
+    **License**: `r packageDescription("DASC")[["License"]]`<br />
+    **Prerequisites**: NMF, cvxclustr, Biobase <br />
+  
 ```{r style, echo = FALSE, results = 'asis'}
-BiocStyle::markdown()
+
+    BiocStyle::markdown()
+
 ```
 
 ```{r setup, echo=FALSE, message=FALSE}
-library(knitr)
-opts_chunk$set(comment=NA, fig.align="center", warning=FALSE)
 
-## Libraries
-library(NMF)
-library(cvxclustr)
-library(DESeq2)
-library(ggplot2)
-library(pcaExplorer)
+    library(knitr)
+    opts_chunk$set(comment=NA, fig.align="center", warning=FALSE)
+
+    ## Libraries
+    require(Biobase)
+    require(NMF)
+    require(cvxclustr)
+    
 ```
 
 # Getting started
 
-`r Biocpkg("DASC")` is an R package distributed as part of the [Bioconductor](http://bioconductor.org) project. To install the package, start R and enter:
+`r Biocpkg("DASC")` is an R package distributed as part of the 
+    [Bioconductor](http://bioconductor.org) project. To install the
+    package, start R and enter:
+
 
 ```{r installation, eval=FALSE}
-source("http://bioconductor.org/biocLite.R")
-biocLite("DASC")
+    
+    source("http://bioconductor.org/biocLite.R")
+    biocLite("DASC")
+    
 ```
 
-Also, make sure to that `r CRANpkg("NMF")`, `r CRANpkg("cvxclustr")` and `r Biocpkg("Biobase")` are installed in your system before running `r Biocpkg("DASC")`. 
 
-Once `r Rpackage("DASC")` is installed, it can be loaded to the R enviornment by the following command.
+Please, make sure to that `r CRANpkg("NMF")`, `r CRANpkg("cvxclustr")` and 
+    `r Biocpkg("Biobase")` are installed in your system before running 
+    `r Biocpkg("DASC")`. Once `r Rpackage("DASC")` is installed, it can be 
+    loaded to the R enviornment by the following command.
+
 
 ```{r loadlibrary, eval=FALSE}
-library(DASC)
+
+    library(DASC)
+
 ```
 
 # Introduction
 
-`r Biocpkg("DASC")` is used for identifying batches in a and classifying samples into different batches in a high dimensional gene   expression dataset. The batch information can be further used as a covariate in conjunction with other variables of interest among standard bioinformatics analysis like differential expression analysis.
+`r Biocpkg("DASC")` is used for identifying batches and classifying samples 
+    into different batches in a high dimensional gene expression dataset. 
+    The batch information can be further used as a covariate in conjunction 
+    with other variables of interest among standard bioinformatics analysis 
+    like differential expression analysis.
 
 ## Citation info
 
-If you use `r Biocpkg("DASC")` for your analysis, please cite it as here below:
-
-To cite package ‘DASC’ in publications use:
+If you use `r Biocpkg("DASC")` for your analysis, please cite it as here 
+    below. To cite package ‘DASC’ in publications use:
 
 ```
-@Manual{,
-    title = {DASC: Detecting hidden batch factors through data adaptive adjustment for biological effects.},
-    author = {Haidong Yi, Ayush T. Raman, Han Zhang, Genevera I. Allen and Zhandong Liu},
+    @Manual{,
+    title = {DASC: Detecting hidden batch factors through data adaptive 
+                adjustment for biological effects.},
+    author = {Haidong Yi, Ayush T. Raman, Han Zhang, Genevera I. Allen and 
+                Zhandong Liu},
     year = {2017},
     note = {R package version 0.1.0},
-}
+    }
+```
+
+# Quick Example
+
+```{r, message=FALSE, eval=TRUE}
+  library(DASC)
+  data("esGolub")
+  samples <- c(1,2,20,21,37,38)
+  dat <- exprs(esGolub)[1:50,samples]
+  pdat <- pData(esGolub)[samples,]
+  res <- convexBatch(edata = dat, pdata = pdat, factor = pdat$Cell,  
+                      method='ama', type = 3, lambda = 1, rank = 2:3,
+                      nrun = 50, annotation='esGolub Dataset')
 ```
 
 # Setting up the data
-The first step in using cvxbatch package is to properly format the data. For example, in case of gene expression data, it should be a matrix with features (genes, transcripts, voxels) in the rows and samples in the columns. cvxbatch then requires the information for the variable of interest to model the gene expression data effectively. For example, variable of interest could be a genotype or treatment information. Below is an example of Stanford dataset (Chen et. al. PNAS, 2015; Gilad et. al. F1000 Research, 2015).
+
+The first step in using `DASC` package is to properly format the data. For 
+    example, in case of gene expression data, it should be a matrix with 
+    features (genes, transcripts) in the rows and samples in the columns.
+    `DASC` then requires the information for the variable of interest to 
+    model the gene expression data effectively. Variable of interest could 
+    be a genotype or treatment information. 
+
+## Stanford Dataset
+
+Below is an example of Stanford dataset (Chen et. al. PNAS, 2015; 
+    Gilad et. al. F1000 Research, 2015). Here, we use the filtered raw 
+    counts dataset that was published by Gilad et al. F1000 Research. 
+    30% of genes with the lowest expression & mitochondrial genes were 
+    removed (Gilad et al.F1000 Research). 
 
 ```{r, message=FALSE, eval=FALSE}
 
-## filtered raw counts data from Gilad et al. F1000 Research
-## i.e filtering out lower 30% + mitochondrial genes
-set.seed(99)
-data("rawCounts")
-data("datasets")
+    ## libraries
+    set.seed(99)
+    library(DESeq2)
+    library(ggplot2)
+    library(pcaExplorer)
 
-## Using a smaller dataset
-idx <- which(datasets$tissue %in% c("adipose", "adrenal", "pancreas", "brain", "spleen", "small_bowel"))
-rawCounts <- rawCounts[,idx]
-datasets <- datasets[idx,]
+    ## dataset
+    rawCounts <- stanfordData$rawCounts
+    metadata <- stanfordData$metadata
 
-## raw counts
-head(rawCounts)
-dim(rawCounts)
+    ## Using a smaller dataset
+    idx <- which(metadata$tissue %in% c("adipose", "adrenal", "pancreas", 
+                                    "brain", "spleen", "small_bowel"))
+    rawCounts <- rawCounts[,idx]
+    metadata <- metadata[idx,]
 
-## metadata
-head(datasets)
-dim(datasets)
+    ## raw counts
+    head(rawCounts)
+    dim(rawCounts)
+
+    ## metadata
+    head(metadata)
+    dim(metadata)
+    
 ```
 
 # Batch detection using PCA Analysis
 
 ```{r, message = FALSE, eval = FALSE}
 
-## Normalizing the dataset using DESeq2
-dds <- DESeqDataSetFromMatrix(rawCounts, datasets, design = ~ species + tissue)
-dds <- estimateSizeFactors(dds)
-dat <- counts(dds, normalized = TRUE)
-rld.dds <- rlog(dds) ## this step will take some time
-lognormalizedCounts <- log2(dat + 1)
+    ## Normalizing the dataset using DESeq2
+    dds <- DESeqDataSetFromMatrix(rawCounts, metadata, 
+                                      design = ~ species + tissue)
+    dds <- estimateSizeFactors(dds)
+    dat <- counts(dds, normalized = TRUE)
+    rld.dds <- rlog(dds) ## this step will take some time
+    lognormalizedCounts <- log2(dat + 1)
 
-## PCA plot using 
-pcaplot(rld.dds, intgroup = c("tissue", "species"), ntop = 1000, pcX = 1, pcY = 2)
+    ## PCA plot using 
+    pcaplot(rld.dds, intgroup = c("tissue", "species"), ntop = 1000, 
+                pcX = 1, pcY = 2)
 
 ```
 
-<p align="center">
-<img src="PCA_Plot_Fig1.png" style="width:1000px;"/>
-</p>
+```{r, out.width = "800px", echo=FALSE}
+    
+    knitr::include_graphics("PCA_Plot_Fig1.png")
 
-The PCA plot PC1 shows the differences between the tissues and PC2 shows the differences between the species i.e. samples clustering based on species.
+```
+
+In the PCA plot, PC1 shows the differences between the tissues. PC2 shows the 
+    differences between the species i.e. samples clustering based on species.
 
 # Batch detection using DASC
 
 ```{r, message = FALSE, eval = FALSE}
-res <- convexBatch(edata = dat, pdata = datasets, factor = datasets$tissue,  
-                      method='ama', type = 3, lambda = 1, rank = 2:10, nrun = 50, 
+    
+    res <- convexBatch(edata = dat, pdata = metadata, 
+                        factor=metadata$tissue, method='ama', 
+                        type = 3, lambda = 1, rank = 2:10, nrun = 50, 
                         annotation='Stanford Dataset')
-## Consensus plot
-consensusmap(res)
+    ## Consensus plot
+    consensusmap(res)
 
 ```
 
-<p align="center">
-<img src="Consensus_Plot_Fig2.png" style="width:1000px;"/>
-</p>
+```{r, out.width = "800px", echo=FALSE}
+    
+    knitr::include_graphics("Consensus_Plot_Fig2.png")
+
+```
 
 ```{r, message=FALSE, eval = FALSE}
 
-## Residual plot
-plot(res)
+    ## Residual plot
+    plot(res)
 
 ``` 
 
-<p align="center">
-<img src="NMF_Rank_Fig3.png" style="width:800px;"/>
-</p>
+```{r, out.width = "800px", echo=FALSE}
 
-```{r, message = FALSE, eval = FALSE}
-
-## Batches -- dataset has 6 batches
-sample.clust <- data.frame(sample.name = colnames(lognormalizedCounts), 
-                            clust = as.vector(predict(res$fit$`6`)), 
-                              batch = datasets$seqBatch)
-ggplot(data = sample.clust, aes(x = c(1:12), y = clust, color = factor(clust))) +  
-          geom_point(size = 4) + xlab("Sample Number") + ylab("Cluster Number")
+    knitr::include_graphics("NMF_Rank_Fig3.png")
 
 ```
-<p align="center">
-<img src="ClusterNumber_Fig4.png" style="width:600px;"/>
-</p>
 
-Based on the above plots, we observe that the dataset has 6 batches. This can further be compared with the sequencing platform or `datasets$seqBatch`, which suggest that difference in platform led to batch effects. Batch number can be used as another covariate, when differential expression analyses are performed.
+```{r, message = FALSE, eval = FALSE}
+ 
+    ## Batches -- dataset has 6 batches
+    sample.clust <- data.frame(sample.name = colnames(lognormalizedCounts), 
+                                clust = as.vector(predict(res$fit$`6`)), 
+                                batch = metadata$seqBatch)
+    ggplot(data = sample.clust, aes(x = c(1:12), y = clust, 
+            color=factor(clust))) + geom_point(size = 4) + 
+             xlab("Sample Number") + ylab("Cluster Number")
+
+```
+
+```{r, out.width = "800px", echo=FALSE}
+    
+    knitr::include_graphics("ClusterNumber_Fig4.png")
+
+```
+
+
+Based on the above plots, we observe that the dataset has 6 batches. This 
+    can further be compared with the sequencing platform or 
+    `datasets$seqBatch`. The results suggest that differences in platform 
+    led to batch effects. Batch number can be used as another covariate, 
+    when differential expression analyses using `DESeq2`,`edgeR` 
+    or `limma` are performed.
+
 
 # More Examples
-We are currently working on vignette and will be uploading more examples soon.
 
+We are currently working on vignette and will be uploading more 
+    examples soon.
+    
 # Session Info
+
 ```{r, message=FALSE}
 
-sessionInfo()
+    sessionInfo()
 
 ```

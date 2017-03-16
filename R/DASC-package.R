@@ -1,4 +1,5 @@
-#' Detecting hidden batch factors through data adaptive shrinkage and clustering (DASC)
+#' Detecting hidden batch factors through data adaptive shrinkage 
+#' and clustering (DASC)
 #'
 #' @author Haidong Yi, Ayush T. Raman
 #' @docType package

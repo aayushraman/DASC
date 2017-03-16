@@ -8,7 +8,8 @@ convexBatch(edata, pdata, factor, method = "ama", type = 3, lambda, rank,
   nrun, spanning = FALSE, annotation)
 }
 \arguments{
-\item{edata}{the normalized target matrix, a data.frame The row is gene, the column is sample}
+\item{edata}{the normalized target matrix, a data.frame The row is gene, 
+the column is sample}
 
 \item{pdata}{Phenotypic data summarizes information about the samples}
 
@@ -16,9 +17,11 @@ convexBatch(edata, pdata, factor, method = "ama", type = 3, lambda, rank,
 
 \item{method}{Algorithm to use: 'admm' or 'ama'}
 
-\item{type}{An integer indicating the norm used: 1 = 1-norm 2 = 2-norm 3 = 2-norm^2}
+\item{type}{An integer indicating the norm used: 1 = 1-norm 2 = 2-norm 
+3 = 2-norm^2}
 
-\item{lambda}{A double number The regularization parameter in the convex optimization}
+\item{lambda}{A double number The regularization parameter in the convex 
+optimization}
 
 \item{rank}{A integer sequence}
 
@@ -29,14 +32,26 @@ convexBatch(edata, pdata, factor, method = "ama", type = 3, lambda, rank,
 \item{annotation}{An annotation of the dataset}
 }
 \value{
-outputs the result of semi-NMF. It classifies each sample to its batch factor.
+outputs the result of semi-NMF. It classifies each sample to its 
+batch factor.
 }
 \description{
 Batch detection via Semi-NMF
 }
+\examples{
+library(NMF)
+library(cvxclustr)
+dat <- data.frame(matrix(rnbinom(n=200, mu=100, size=1/0.5), ncol=4))
+pdat <- data.frame(sample = colnames(dat), type = c(rep("A",2),rep("B",2)))
+rownames(pdat) <- colnames(dat)
+res <- convexBatch(edata = dat, pdata = pdat, factor = pdat$type,  
+                    method='ama', type = 3, lambda = 1, rank = 2, 
+                    nrun = 50, annotation='simulated dataset') 
+
+}
 \seealso{
-\code{\link[cvxclustr]{cvxclust_path_ama}} and \code{\link[cvxclustr]{cvxclust_path_admm}} for
-the detailed algorithm
+\code{\link[cvxclustr]{cvxclust_path_ama}} and 
+\code{\link[cvxclustr]{cvxclust_path_admm}} for the detailed algorithm
 }
 \author{
 Haidong Yi, Ayush T. Raman

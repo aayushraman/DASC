@@ -18,8 +18,9 @@ The result of semi-NMF for the current iteration
 Get the error of Semi-NMF
 }
 \details{
-This is a customerized function defined in terms of \code{\link[NMF]{nmf}}. For more information,
-please go through the NMF vignette \url{https://cran.r-project.org/web/packages/NMF/vignettes/NMF-vignette.pdf}
+This is a customerized function defined in terms of \code{\link[NMF]{nmf}}. 
+For more information, please go through the NMF vignette 
+\url{https://cran.r-project.org/web/packages/NMF/vignettes/NMF-vignette.pdf}
 }
 \author{
 Haidong Yi, Ayush T. Raman
