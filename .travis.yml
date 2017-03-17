@@ -16,6 +16,10 @@ r_check_args: "--no-build-vignettes --no-manual --timings"
 after_success:
   - Rscript -e 'library(covr); codecov()'
 
+os:
+  - linux
+  - osx 
+
 notifications:
   email:
     on_success: change
@@ -24,4 +28,5 @@ notifications:
 env:
   global:
     - _R_CHECK_TIMINGS_="0"
-    
+
+
