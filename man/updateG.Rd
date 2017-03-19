@@ -20,10 +20,10 @@ updateG(X, mf, mg)
 Update G in Semi-NMF
 }
 \examples{
-X = matrix(1:12,nrow=4)
-mf = matrix(1:8,nrow=4)
-mg = matrix(1:6,ncol=2)
-mg = updateG(X,mf,mg)
+X <- matrix(1:12,nrow=4)
+mf <- matrix(1:8,nrow=4)
+mg <- matrix(1:6,ncol=2)
+mg <- updateG(X,mf,mg)
 }
 \author{
 Haidong Yi, Ayush T. Raman

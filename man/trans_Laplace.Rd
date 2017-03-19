@@ -16,9 +16,9 @@ trans_Laplace(colDataBATCH)
 Get Laplace matrix from factor vector
 }
 \examples{
-batch.factor = c(rep('human',13),rep('mouse',13))
-batch.factor = as.factor(batch.factor)
-adj = trans_Laplace(batch.factor)
+batch.factor <- c(rep('human',13),rep('mouse',13))
+batch.factor <- as.factor(batch.factor)
+adj <- trans_Laplace(batch.factor)
 
 }
 \author{

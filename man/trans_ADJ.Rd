@@ -16,9 +16,9 @@ trans_ADJ(colDataBATCH)
 Outputs Adjacency matrix from the factor vector
 }
 \examples{
-batch.factor = c(rep('human',13),rep('mouse',13))
-batch.factor = as.factor(batch.factor)
-adj = trans_Laplace(batch.factor)
+batch.factor <- c(rep('human',13),rep('mouse',13))
+batch.factor <- as.factor(batch.factor)
+adj <- trans_Laplace(batch.factor)
 
 }
 \author{

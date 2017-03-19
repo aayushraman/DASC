@@ -20,10 +20,10 @@ the column is sample}
 \item{type}{An integer indicating the norm used: 1 = 1-norm 2 = 2-norm 
 3 = 2-norm^2}
 
-\item{lambda}{A double number The regularization parameter in the convex 
+\item{lambda}{A double number A regularization parameter in the convex 
 optimization}
 
-\item{rank}{A integer sequence}
+\item{rank}{integer sequence}
 
 \item{nrun}{the iteration numbers of Semi-NMF}
 
@@ -41,12 +41,13 @@ Batch detection via Semi-NMF
 \examples{
 library(NMF)
 library(cvxclustr)
+library(Biobase)
 dat <- data.frame(matrix(rnbinom(n=200, mu=100, size=1/0.5), ncol=4))
 pdat <- data.frame(sample = colnames(dat), type = c(rep("A",2),rep("B",2)))
 rownames(pdat) <- colnames(dat)
-res <- convexBatch(edata = dat, pdata = pdat, factor = pdat$type,  
-                    method='ama', type = 3, lambda = 1, rank = 2, 
-                    nrun = 50, annotation='simulated dataset') 
+res <- convexBatch(edata = dat, pdata = pdat, 
+    factor = pdat$type,method='ama', type = 3, lambda = 1, rank = 2, 
+    nrun = 50, annotation='simulated dataset') 
 
 }
 \seealso{

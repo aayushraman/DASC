@@ -11,9 +11,10 @@
 #' @return The result of semi-NMF for the current iteration
 #'
 #' @author Haidong Yi, Ayush T. Raman
+#'
 
 my_objective_function <- function(model, target) {
-    H <- NMF::basis(model)
+    H <- basis(model)
     G <- t(coef(model))
     norm((target - H %*% t(G)), type = "f")
 }

@@ -6,15 +6,14 @@
 #' @author Haidong Yi, Ayush T. Raman
 #'
 #' @examples
-#' batch.factor = c(rep('human',13),rep('mouse',13))
-#' batch.factor = as.factor(batch.factor)
-#' adj = trans_Laplace(batch.factor)
+#' batch.factor <- c(rep('human',13),rep('mouse',13))
+#' batch.factor <- as.factor(batch.factor)
+#' adj <- trans_Laplace(batch.factor)
 #'
 
 trans_Laplace <- function(colDataBATCH) {
-    adjacency <- matrix(0,
-                        nrow = length(colDataBATCH),
-                        ncol = length(colDataBATCH))
+    adjacency <- matrix(0, nrow = length(colDataBATCH), 
+                            ncol = length(colDataBATCH))
     iter <- length(levels(colDataBATCH))
     for (i in 1:iter) {
         FACTOR <- which(colDataBATCH == levels(colDataBATCH)[i])
@@ -27,5 +26,5 @@ trans_Laplace <- function(colDataBATCH) {
     }
     adjacency <- adjacency + t(adjacency)
     adjacency <- diag(rowSums(adjacency)) - adjacency
-    return(adjacency)
+    return (adjacency)
 }

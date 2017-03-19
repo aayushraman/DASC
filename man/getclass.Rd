@@ -16,7 +16,7 @@ getclass(ADJ)
 Spanning tree from adjacency matrix
 }
 \examples{
-W = matrix(c(0,1,1,1,1,0,1,1,1,1,0,1,1,1,1,0),nrow=4)
+W <- matrix(c(0,1,1,1,1,0,1,1,1,1,0,1,1,1,1,0), nrow=4)
 getclass(W)
 
 }

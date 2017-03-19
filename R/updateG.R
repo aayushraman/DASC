@@ -7,11 +7,10 @@
 #' @author Haidong Yi, Ayush T. Raman
 #' @export
 #' @examples
-#' X = matrix(1:12,nrow=4)
-#' mf = matrix(1:8,nrow=4)
-#' mg = matrix(1:6,ncol=2)
-#' mg = updateG(X,mf,mg)
-
+#' X <- matrix(1:12,nrow=4)
+#' mf <- matrix(1:8,nrow=4)
+#' mg <- matrix(1:6,ncol=2)
+#' mg <- updateG(X,mf,mg)
 
 updateG <- function(X, mf, mg) {
     p <- nrow(X)
@@ -31,9 +30,9 @@ updateG <- function(X, mf, mg) {
     GFFN <- mg %*% GFFN
     for (i in 1:n) {
         for (j in 1:k) {
-            G[i, j] <- mg[i, j] * sqrt((0.5 * (abs(XF[i, j]) + XF[i, j]) + 
-                                GFFN[i,j])/(0.5*(abs(XF[i,j]) - XF[i, j]) + 
-                                GFFP[i,j]))
+            num <- 0.5 * (abs(XF[i, j]) + XF[i, j]) + GFFN[i, j]
+            den <- 0.5 * (abs(XF[i, j]) - XF[i, j]) + GFFP[i, j]
+            G[i, j] <- mg[i, j] * sqrt(num / den)
         }
     }
     G

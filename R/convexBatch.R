@@ -11,10 +11,10 @@ require(cvxclustr)
 #'
 #' @export
 #' @examples
-#' W = matrix(c(0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0),nrow=4)
-#' w = W_toVector(W,4)
+#' W <- matrix(c(0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0),nrow=4)
+#' w <- W_toVector(W,4)
 
-W_toVector <- function(Adjacency, n) {
+W_toVector <- function(Adjacency , n) {
     w <- double(n * (n - 1) / 2)
     iter <- 1
     for (i in 1:(n - 1)) {
@@ -45,7 +45,7 @@ getFather <- function(v, X) {
         X[i] <- r
         i <- j
     }
-    return(r)
+    return (r)
 }
 
 #' Merge two nodes
@@ -62,12 +62,12 @@ merge <- function(x, y, X) {
     fy <- getFather(y, X)
     if (fx < fy) {
         X[fx] <- fy
-    } else {
+    }
+    else{
         X[fy] <- fx
     }
-    return(X)
+    return (X)
 }
-
 
 #' Spanning tree from adjacency matrix
 #'
@@ -76,7 +76,7 @@ merge <- function(x, y, X) {
 #' @author Haidong Yi, Ayush T. Raman
 #' @export
 #' @examples
-#' W = matrix(c(0,1,1,1,1,0,1,1,1,1,0,1,1,1,1,0),nrow=4)
+#' W <- matrix(c(0,1,1,1,1,0,1,1,1,1,0,1,1,1,1,0), nrow=4)
 #' getclass(W)
 #'
 
@@ -88,6 +88,7 @@ getclass <- function(ADJ) {
     for (i in 1:Rownum) {
         father[i] <- i
     }
+    
     for (i in 2:Rownum) {
         for (j in 1:(i - 1)) {
             if (ADJ[i, j] > 0) {
@@ -124,9 +125,9 @@ getclass <- function(ADJ) {
 #' @param method Algorithm to use: 'admm' or 'ama'
 #' @param type An integer indicating the norm used: 1 = 1-norm 2 = 2-norm 
 #' 3 = 2-norm^2
-#' @param lambda A double number The regularization parameter in the convex 
+#' @param lambda A double number A regularization parameter in the convex 
 #' optimization
-#' @param rank A integer sequence
+#' @param rank integer sequence
 #' @param nrun the iteration numbers of Semi-NMF
 #' @param spanning parameter is assigned as false
 #' @param annotation An annotation of the dataset
@@ -141,12 +142,13 @@ getclass <- function(ADJ) {
 #' @examples
 #' library(NMF)
 #' library(cvxclustr)
+#' library(Biobase)
 #' dat <- data.frame(matrix(rnbinom(n=200, mu=100, size=1/0.5), ncol=4))
 #' pdat <- data.frame(sample = colnames(dat), type = c(rep("A",2),rep("B",2)))
 #' rownames(pdat) <- colnames(dat)
-#' res <- convexBatch(edata = dat, pdata = pdat, factor = pdat$type,  
-#'                     method='ama', type = 3, lambda = 1, rank = 2, 
-#'                     nrun = 50, annotation='simulated dataset') 
+#' res <- convexBatch(edata = dat, pdata = pdat, 
+#'     factor = pdat$type,method='ama', type = 3, lambda = 1, rank = 2, 
+#'     nrun = 50, annotation='simulated dataset') 
 #' 
 #' @author Haidong Yi, Ayush T. Raman
 #'
@@ -154,57 +156,54 @@ getclass <- function(ADJ) {
 #' \code{\link[cvxclustr]{cvxclust_path_admm}} for the detailed algorithm
 #'
 
-convexBatch <- function(edata, pdata, factor, method = "ama", type = 3, 
-                         lambda, rank, nrun, spanning = FALSE, annotation) {
-        if (!is.null(type) && !(type %in% c(1, 2, 3)))
-            stop("type must be '1', '2', '3', or NULL")
-        if (!is.null(method) && !(method %in% c("ama", "admm")))
-            stop("method must be 'ama', 'admm', or NULL")
-        edata = as.matrix(edata)
-        
-        Zero <- apply(edata, 1, sd)
-        Zero.num <- which(Zero < 0.001)
-        if (length(Zero.num) > 0) {
-            names(Zero.num) <- NULL
-            edata <- edata[-Zero.num,]
+convexBatch <- function(edata, pdata, factor, method="ama", type = 3, lambda, 
+                            rank, nrun, spanning=FALSE, annotation) {
+    
+    ## Check for arguments
+    if (!is.null(type) && !(type %in% c(1, 2, 3)))
+        stop("type must be '1', '2', '3', or NULL")
+    if (!is.null(method) && !(method %in% c("ama", "admm")))
+        stop("method must be 'ama', 'admm', or NULL")
+    edata <- as.matrix(edata)
+    Zero <- apply(edata, 1, sd)
+    Zero.num <- which(Zero < 0.001)
+    if (length(Zero.num) > 0) {
+        names(Zero.num) <- NULL
+        edata <- edata[-Zero.num, ]
+    }
+    edata <- log(1 + edata)
+    if (type == 3) {
+        Laplace <- trans_Laplace(as.factor(factor))
+        Udata <- edata %*% solve(diag(ncol(edata)) + lambda * Laplace)
+        Udata <- as.matrix(Udata)
+        Bdata <- edata - Udata
+    } else {
+        ADJ <- trans_ADJ(as.factor(factor))
+        if (spanning) {
+            ADJ <- getclass(ADJ)
         }
-        edata = log(1 + edata)
-        
-        if (type == 3) {
-            Laplace <- trans_Laplace(as.factor(factor))
-            Udata <- edata %*% solve(diag(ncol(edata)) + lambda * Laplace)
-            Udata <- as.matrix(Udata)
-            Bdata <- edata - Udata
-        } else {
-            ADJ <- trans_ADJ(as.factor(factor))
-            if (spanning) {
-                ADJ = getclass(ADJ)
-            }
-            w = W_toVector(ADJ, nrow(ADJ))
-            sol = cvxclustr::cvxclust(edata, w, lambda, method = method, 
-                                        type = type)
-            Bdata = edata - sol$U[[1]]
-        }
-        
-        Zero <- apply(Bdata, 1, sd)
-        Zero.num <- which(Zero < 0.001)
-        if (length(Zero.num) > 0) {
-            names(Zero.num) <- NULL
-            Bdata <- Bdata[-Zero.num,]
-        }
-        
-        metadata <- data.frame(labelDescription = names(pdata),
-                                row.names = names(pdata))
-        pdata <- new("AnnotatedDataFrame", data = pdata, 
-                        varMetadata = metadata)
-        DataSet <- Biobase::ExpressionSet(assayData = edata, 
-                                            phenoData = pdata, 
-                                            annotation = annotation)
-        
-        # Remark: In windows, the nrun > 1 will be crashed,
-        # So I recommend to use mac os x or linux to run the
-        data.nmf <- NMF::nmf(DataSet, rank, my.algorithm, nrun = nrun, 
-                                .opt = "v", objective = my_objective_function, 
-                                seed = my.seeding.method, mixed = TRUE)
-        return(data.nmf)
+        w <- W_toVector(ADJ, nrow(ADJ))
+        sol <- cvxclust(edata, w, lambda, method = method, type = type)
+        Bdata <- edata - sol$U[[1]]
+    }
+    
+    Zero <- apply(Bdata, 1, sd)
+    Zero.num <- which(Zero < 0.001)
+    if (length(Zero.num) > 0) {
+        names(Zero.num) <- NULL
+        Bdata <- Bdata[-Zero.num, ]
+    }
+    
+    metadata <- data.frame(labelDescription = names(pdata), 
+                            row.names = names(pdata))
+    pdata <- new("AnnotatedDataFrame", data = pdata, varMetadata = metadata)
+    DataSet <- ExpressionSet(assayData = edata, phenoData = pdata, 
+                                annotation = annotation)
+    
+    ## Remark: In windows, the nrun > 1 will be crashed, So I would 
+    ## recommend to use mac os x or linux to run the code in R
+    data.nmf <- nmf(DataSet, rank, my.algorithm, nrun = nrun, .opt = 'v', 
+                        objective = my_objective_function, 
+                        seed = my.seeding.method, mixed = TRUE)
+    return (data.nmf)
 }

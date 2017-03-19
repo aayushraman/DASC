@@ -18,8 +18,8 @@ W_toVector(Adjacency, n)
 Transform the adjacency matrix to a vector
 }
 \examples{
-W = matrix(c(0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0),nrow=4)
-w = W_toVector(W,4)
+W <- matrix(c(0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0),nrow=4)
+w <- W_toVector(W,4)
 }
 \author{
 Haidong Yi, Ayush T. Raman
