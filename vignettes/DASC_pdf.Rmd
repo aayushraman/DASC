@@ -1,9 +1,8 @@
 ---
-title: "DASC user guide"
+title: "DASC user guide (PDF)"
 author: Haidong Yi†, Ayush T. Raman†, Han Zhang, Genevera Allen, Zhandong Liu
-date: "`r doc_date()`"
-output: 
-    BiocStyle::pdf_document
+date: "`r BiocStyle::doc_date()`"
+package: "`r BiocStyle::pkg_ver('DASC')`"
 abstract: |
     Batch effects are one of the major source of technical variations in high 
     throughput studies such as omics profiling. It has been well established 
@@ -18,33 +17,23 @@ abstract: |
     interest. Here, we present `r Biocpkg("DASC")`, a novel algorithm that is
     based on convex clustering and semi-NMF for the detection of unknown batch 
     effects.
+output: 
+    BiocStyle::pdf_document
 vignette: |
     %\VignetteIndexEntry{DASC user guide} 
     %\VignetteEngine{knitr::rmarkdown}
-    %\VignetteEncoding{UTF-8}
+    %\VignetteEncoding[utf8]{inputenc}
     %\VignetteKeywords{BatchEffects, RNASeq, GeneExpression, Normalization, 
         Preprocessing, QualityControl, StatisticalMethod}
 ---
-<br>
-**Package**: `r Rpackage("DASC")`<br />
-**Authors**: `r packageDescription("DASC")[["Author"]]` <br />
-**Version**: `r packageDescription("DASC")[["Version"]]`<br />
-**Compiled date**: `r Sys.Date()`<br />
-**License**: `r packageDescription("DASC")[["License"]]`<br />
-**Prerequisites**: NMF, cvxclustr, Biobase <br />
 
-```{r style, echo = FALSE, results = 'asis'}
-BiocStyle::markdown()
-```
-
-```{r setup, echo=FALSE, message=FALSE}
-library(knitr)
-opts_chunk$set(comment=NA, fig.align="center", warning=FALSE)
-
+```{r setup, echo=FALSE, results="hide", message=FALSE}
+knitr::opts_chunk$set(tidy=FALSE, cache=TRUE, 
+                        dev="png", message=FALSE, error=FALSE, warning=TRUE)
 ## Libraries
-require(Biobase)
-require(NMF)
-require(cvxclustr)
+require("Biobase")
+require("NMF")
+require("cvxclustr")
 ```
 
 # Getting started
@@ -62,10 +51,6 @@ Please, make sure to that `r CRANpkg("NMF")`, `r CRANpkg("cvxclustr")` and
 `r Biocpkg("Biobase")` are installed in your system before running 
 `r Biocpkg("DASC")`. Once `r Rpackage("DASC")` is installed, it can be loaded 
 to the R enviornment by the following command.
-
-```{r loadlibrary, eval=FALSE}
-library(DASC)
-```
 
 # Introduction
 
@@ -93,15 +78,19 @@ To cite package ‘DASC’ in publications use:
 
 # Quick Example
 
-```{r, message=FALSE, eval=TRUE}
+```{r, message=FALSE, results='hide', eval=TRUE}
 library(DASC)
 data("esGolub")
-samples <- c(1,2,20,21,37,38)
-dat <- exprs(esGolub)[1:50,samples]
+samples <- c(20,21,28,30)
+dat <- exprs(esGolub)[1:100,samples]
 pdat <- pData(esGolub)[samples,]
-res <- convexBatch(edata = dat, pdata = pdat, factor = pdat$Cell, 
-                    method = 'ama', type = 3, lambda = 1, rank = 2:3, 
-                    nrun = 50, annotation='esGolub Dataset')
+
+## use nrun = 50 or more for better convergence of results
+res <- convex_batch(edata = dat, pdata = pdat, factor = pdat$Cell, 
+                        method = 'ama', type = 3, lambda = 1, 
+                        rank = 2:3, nrun = 5, annotation="esGolub Dataset")
+#consensusmap(res)
+#plot(res)
 ```
 
 # Setting up the data
@@ -120,9 +109,9 @@ F1000 Research, 2015). Here, we use the filtered raw counts dataset that was
 published by Gilad et al. F1000 Research. 30% of genes with the lowest 
 expression & mitochondrial genes were removed (Gilad et al.F1000 Research).
 
-```{r, message=FALSE, eval=FALSE}
+```{r, message=FALSE, eval=TRUE}
 ## libraries
-set.seed(99)
+set.seed(99999)
 library(DESeq2)
 library(ggplot2)
 library(pcaExplorer)
@@ -130,56 +119,69 @@ library(pcaExplorer)
 ## dataset
 rawCounts <- stanfordData$rawCounts
 metadata <- stanfordData$metadata
+```
 
+```{r, message=FALSE, eval=TRUE}
 ## Using a smaller dataset
-idx <- which(metadata$tissue %in% c("adipose","adrenal","pancreas", "brain",
-                                        "spleen","small_bowel"))
+idx <- which(metadata$tissue %in% c("adipose", "adrenal", "sigmoid"))
 rawCounts <- rawCounts[,idx]
 metadata <- metadata[idx,]
+```
+
+```{r, message=FALSE, eval=TRUE}
 head(rawCounts)
 head(metadata)
 ```
 
 # Batch detection using PCA Analysis
 
-```{r, message = FALSE, eval = FALSE}
+```{r, message=FALSE, eval=TRUE}
 ## Normalizing the dataset using DESeq2
-dds <- DESeqDataSetFromMatrix(rawCounts, metadata, design = ~ species + tissue)
+dds <- DESeqDataSetFromMatrix(rawCounts, metadata, design = ~ species+tissue)
 dds <- estimateSizeFactors(dds)
 dat <- counts(dds, normalized = TRUE)
-rld.dds <- rlog(dds)
 lognormalizedCounts <- log2(dat + 1)
-
-## PCA plot using 
-pcaplot(rld.dds, intgroup = c("tissue", "species"), ntop = 1000, pcX = 1, 
-        pcY = 2)
 ```
 
-In the PCA plot, PC1 shows the differences between the tissues. PC2 shows the 
-differences between the species i.e. samples clustering based on species.
+```{r, message=FALSE, eval=TRUE}
+## PCA plot using 
+rld.dds <- rlog(dds)
+pcaplot(rld.dds, intgroup=c("tissue","species"), ntop=1000, pcX=1, pcY=2)
+```
+
+In the PCA plot, PC1 shows the differences between the species. PC2 shows the 
+differences between the species i.e. samples clustering based on tissues.
 
 # Batch detection using DASC
 
-```{r, message = FALSE, eval = FALSE}
-res <- convexBatch(edata = dat, pdata = metadata, factor=metadata$tissue, 
-                    method='ama', type = 3, lambda = 1, rank = 2:10, nrun = 50, 
-                    annotation='Stanford Dataset')
+```{r, message=FALSE, eval=TRUE}
+res <- convex_batch(edata = dat, pdata = metadata, 
+                        factor = metadata$tissue, method = 'ama', type = 3, 
+                        lambda = 1, rank = 2:3, nrun = 10, 
+                        annotation = 'Stanford Dataset')
+```
+
+```{r, message=FALSE, eval=TRUE}
 ## Consensus plot
 consensusmap(res)
+```
 
+```{r, message=FALSE, eval=TRUE}
 ## Residual plot
 plot(res)
+```
 
+```{r, message=FALSE, eval=TRUE}
 ## Batches -- dataset has 6 batches
 sample.clust <- data.frame(sample.name = colnames(lognormalizedCounts), 
-                            clust = as.vector(predict(res$fit$`6`)), 
+                            clust = as.vector(predict(res$fit$`2`)), 
                             batch = metadata$seqBatch)
-ggplot(data = sample.clust, aes(x = c(1:12), y = clust, color=factor(clust))) + 
+ggplot(data = sample.clust, aes(x=c(1:6), y=clust, color=factor(clust))) + 
     geom_point(size = 4) + xlab("Sample Number") + ylab("Cluster Number")
 ```
 
-Based on the above plots, we observe that the dataset has 6 batches. This can 
-further be compared with the sequencing platform or `datasets$seqBatch`. The 
+Based on the above plots, we observe that the dataset has 2 batches. This can 
+further be compared with the sequencing platform or `metadata$seqBatch`. The 
 results suggest that differences in platform led to batch effects. Batch number 
 can be used as another covariate, when differential expression analyses using 
 `DESeq2`,`edgeR` or `limma` are performed.

@@ -7,10 +7,10 @@
 #' @return \code{model} the result from the semi-NMF algorithm
 #' @author Haidong Yi, Ayush T. Raman
 
-my.algorithm <- function(target, model, iternum = 100) {
+my_algorithm <- function(target, model, iternum = 100) {
     n <- 0
     while (TRUE) {
-        ans <- t(updateG(target, basis(model), t(coef(model))))
+        ans <- t(update_G(target, basis(model), t(coef(model))))
         if (length(which(ans < 1e-20) > 0))
             break
         coef(model) <- ans

@@ -12,8 +12,7 @@
 #'
 
 trans_ADJ <- function(colDataBATCH){
-    adjacency <- matrix(0, nrow = length(colDataBATCH), 
-                            ncol = length(colDataBATCH))
+    adjacency <- matrix(0,nrow=length(colDataBATCH),ncol=length(colDataBATCH))
     iter <- length(levels(colDataBATCH))
     for (i in 1:iter) {
         FACTOR <- which(colDataBATCH == levels(colDataBATCH)[i])

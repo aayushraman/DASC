@@ -10,9 +10,9 @@
 #' X <- matrix(1:12,nrow=4)
 #' mf <- matrix(1:8,nrow=4)
 #' mg <- matrix(1:6,ncol=2)
-#' mg <- updateG(X,mf,mg)
+#' mg <- update_G(X,mf,mg)
 
-updateG <- function(X, mf, mg) {
+update_G <- function(X, mf, mg) {
     p <- nrow(X)
     n <- ncol(X)
     k <- ncol(mf)
