@@ -1,0 +1,34 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+# Header
+language: r
+r: bioc-devel
+warnings_are_errors: false
+sudo: false
+cache: packages
+
+r_packages:
+  - covr
+
+<<<<<<< HEAD
+r_build_args: "--no-build-vignettes --no-manual --no-resave-data"
+||||||| merged common ancestors
+r_build_args: "--no-manual --no-resave-data"
+=======
+r_build_args: "--no-manual --no-build-vignettes --no-resave-data"
+>>>>>>> e06329e7958268a7cb013bd3da01d418d9979d44
+r_check_args: "--no-build-vignettes --no-manual --timings"
+
+after_success:
+  - Rscript -e 'library(covr); codecov()'
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
+
+env:
+  global:
+    - _R_CHECK_TIMINGS_="0"
+
+
