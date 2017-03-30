@@ -16,5 +16,5 @@
 my_objective_function <- function(model, target) {
     H <- basis(model)
     G <- t(coef(model))
-    norm((target - H %*% t(G)), type = "f")
+    norm( (target - H %*% t(G)), type = "f")
 }

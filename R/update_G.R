@@ -13,7 +13,6 @@
 #' mg <- update_G(X,mf,mg)
 
 update_G <- function(X, mf, mg) {
-    p <- nrow(X)
     n <- ncol(X)
     k <- ncol(mf)
     G <- matrix(nrow = n, ncol = k)

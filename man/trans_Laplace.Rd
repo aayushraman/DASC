@@ -4,13 +4,13 @@
 \alias{trans_Laplace}
 \title{Get Laplace matrix from factor vector}
 \usage{
-trans_Laplace(colDataBATCH)
+trans_Laplace(col_data)
 }
 \arguments{
-\item{colDataBATCH}{A factor vector}
+\item{col_data}{A factor vector}
 }
 \value{
-\code{adjacency} The Laplace matrix of \code{colDataBATCH}
+\code{adjacency} The Laplace matrix of \code{col_data}
 }
 \description{
 Get Laplace matrix from factor vector

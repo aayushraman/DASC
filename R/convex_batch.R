@@ -29,10 +29,10 @@ require(cvxclustr)
 #' library(NMF)
 #' library(cvxclustr)
 #' library(Biobase)
-#' dat <- data.frame(matrix(rnbinom(n = 200, mu = 100, size = 1/0.5),ncol = 4))
-#' pdat <- data.frame(sample = colnames(dat), type = c(rep("A",2), rep("B",2)))
+#' dat <- data.frame(matrix(rnbinom(n=200, mu=100, size=1/0.5), ncol=4))
+#' pdat <- data.frame(sample = colnames(dat), type = c(rep('A',2), rep('B',2)))
 #' rownames(pdat) <- colnames(dat)
-#' res <- convex_batch(edata = dat, pdata = pdat, 
+#' res <- convex_batch(edata = dat, pdata = pdat,
 #'     factor = pdat$type,method='ama', type = 3, lambda = 1, rank = 2, 
 #'     nrun = 50, spanning = FALSE, annotation='simulated dataset') 
 #' 
@@ -42,13 +42,13 @@ require(cvxclustr)
 #' \code{\link[cvxclustr]{cvxclust_path_admm}} for the detailed algorithm
 #'
 
-convex_batch <- function(edata, pdata, factor, method="ama", type=3, lambda, 
-                            rank, nrun, spanning=FALSE, annotation) {
-    
-    if (!is.null(type) && !(type %in% c(1, 2, 3))){
+convex_batch <- function(edata, pdata, factor, method="ama",
+                            type=3, lambda, rank, nrun,
+                            spanning=FALSE, annotation) {
+    if (!is.null(type) && !(type %in% c(1, 2, 3))) {
         stop("type must be '1', '2', '3', or NULL")
     }
-    if (!is.null(method) && !(method %in% c("ama", "admm"))){
+    if (!is.null(method) && !(method %in% c("ama", "admm"))) {
         stop("method must be 'ama', 'admm', or NULL")
     }
     edata <- as.matrix(edata)
@@ -73,25 +73,21 @@ convex_batch <- function(edata, pdata, factor, method="ama", type=3, lambda,
         sol <- cvxclust(edata, w, lambda, method = method, type = type)
         Bdata <- edata - sol$U[[1]]
     }
-    
     Zero <- apply(Bdata, 1, sd)
     Zero.num <- which(Zero < 0.001)
     if (length(Zero.num) > 0) {
         names(Zero.num) <- NULL
         Bdata <- Bdata[-Zero.num, ]
     }
-    metadata <- data.frame(labelDescription = names(pdata), 
+    metadata <- data.frame(labelDescription = names(pdata),
                             row.names = names(pdata))
     pdata <- new("AnnotatedDataFrame", data = pdata, varMetadata = metadata)
-    DataSet <- ExpressionSet(assayData = edata, phenoData = pdata, 
+    data_set <- ExpressionSet(assayData = edata, phenoData = pdata,
                                 annotation = annotation)
-    
-    ## Remark: In windows, the nrun > 1 will be crashed, So I would 
-    ## recommend to use mac os x or linux to run the code in R
-    data.nmf <- nmf(DataSet, rank, my_algorithm, nrun = nrun, .opt = 'v', 
-                        objective = my_objective_function, 
+    data.nmf <- nmf(data_set, rank, my_algorithm, nrun = nrun, .opt = "v",
+                        objective = my_objective_function,
                         seed = my_seeding_method, mixed = TRUE)
-    return (data.nmf)
+    return(data.nmf)
 }
 
 #' Transform the adjacency matrix to a vector
@@ -144,7 +140,7 @@ get_father <- function(v, X) {
         X[i] <- r
         i <- j
     }
-    return (r)
+    return(r)
 }
 
 
@@ -160,7 +156,7 @@ get_father <- function(v, X) {
 #' get_class(W)
 #'
 
-get_class <- function(ADJ){
+get_class <- function(ADJ) {
     Rownum <- nrow(ADJ)
     Colnum <- ncol(ADJ)
     father <- numeric()
@@ -208,9 +204,8 @@ merge <- function(x, y, X) {
     fy <- get_father(y, X)
     if (fx < fy) {
         X[fx] <- fy
-    }
-    else{
+    } else {
         X[fy] <- fx
     }
-    return (X)
+    return(X)
 }

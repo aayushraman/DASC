@@ -14,9 +14,9 @@ my_algorithm <- function(target, model, iternum = 100) {
         if (length(which(ans < 1e-20) > 0))
             break
         coef(model) <- ans
-        basis(model) <- target %*% t(coef(model)) %*% 
-                            solve(coef(model) %*% t(coef(model)))
-        if (n > iternum || my_objective_function(model, target) < .5)
+        basis(model) <- target %*% t(coef(model)) %*%
+                solve(coef(model) %*% t(coef(model)))
+        if (n > iternum || my_objective_function(model, target) < 0.5)
             break
         n <- n + 1
     }

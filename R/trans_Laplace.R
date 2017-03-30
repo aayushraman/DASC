@@ -1,7 +1,7 @@
 #' Get Laplace matrix from factor vector
 #'
-#' @param colDataBATCH A factor vector
-#' @return \code{adjacency} The Laplace matrix of \code{colDataBATCH}
+#' @param col_data A factor vector
+#' @return \code{adjacency} The Laplace matrix of \code{col_data}
 #' @export
 #' @author Haidong Yi, Ayush T. Raman
 #'
@@ -11,12 +11,11 @@
 #' adj <- trans_Laplace(batch.factor)
 #'
 
-trans_Laplace <- function(colDataBATCH) {
-    adjacency <- matrix(0, nrow = length(colDataBATCH), 
-                            ncol = length(colDataBATCH))
-    iter <- length(levels(colDataBATCH))
+trans_Laplace <- function(col_data) {
+    adjacency <- matrix(0, nrow = length(col_data), ncol = length(col_data))
+    iter <- length(levels(col_data))
     for (i in 1:iter) {
-        FACTOR <- which(colDataBATCH == levels(colDataBATCH)[i])
+        FACTOR <- which(col_data == levels(col_data)[i])
         N <- length(FACTOR)
         for (j in 1:(N - 1)) {
             for (k in (j + 1):N) {
@@ -26,5 +25,5 @@ trans_Laplace <- function(colDataBATCH) {
     }
     adjacency <- adjacency + t(adjacency)
     adjacency <- diag(rowSums(adjacency)) - adjacency
-    return (adjacency)
+    return(adjacency)
 }

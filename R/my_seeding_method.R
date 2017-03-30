@@ -17,5 +17,5 @@ my_seeding_method <- function(model, target) {
     G0 <- G0 + 0.2
     coef(model) <- t(G0)
     basis(model) <- target %*% G0 %*% solve(t(G0) %*% G0)
-    return (model)
+    return(model)
 }

@@ -4,13 +4,13 @@
 \alias{trans_ADJ}
 \title{Outputs Adjacency matrix from the factor vector}
 \usage{
-trans_ADJ(colDataBATCH)
+trans_ADJ(col_data)
 }
 \arguments{
-\item{colDataBATCH}{A factor vector}
+\item{col_data}{A factor vector}
 }
 \value{
-\code{adjacency} Adjacency matrix of \code{colDataBATCH}
+\code{adjacency} Adjacency matrix of \code{col_data}
 }
 \description{
 Outputs Adjacency matrix from the factor vector
