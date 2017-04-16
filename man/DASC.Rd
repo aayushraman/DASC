@@ -49,11 +49,9 @@ Batch factor detection via DASC (Data-adaptive Shrinkage and Clustering-DASC)
 The \code{convex_batch} function is the main function of our algorithm DASC
 (Data-adaptive Shrinkage and Clustering-DASC). The DASC includes two main 
 steps
-\itemize{
-  \item Data-adaptive shrinkage using convex clustering shrinkage 
-  (Implemented by convex optimization.);
-
-  \item Extract batch factors using matrix factorization.
+\itemize{ \item Data-adaptive shrinkage using convex clustering shrinkage
+(Implemented by convex optimization.);
+\item Extract batch factors using matrix factorization.
 }
 }
 \examples{
@@ -63,9 +61,9 @@ library(Biobase)
 dat <- data.frame(matrix(rnbinom(n=200, mu=100, size=1/0.5), ncol=4))
 pdat <- data.frame(sample = colnames(dat), type = c(rep('A',2), rep('B',2)))
 rownames(pdat) <- colnames(dat)
-res <- DASC(edata = dat, pdata = pdat, factor = pdat$type,method='ama',
- type = 3, lambda = 1, rank = 2, nrun = 50, spanning = FALSE,
- annotation='simulated dataset')
+res <- DASC(edata=dat, pdata=pdat, factor=pdat$type, method='ama', type=3,
+lambda = 1, rank = 2, nrun = 50, spanning = FALSE,
+annotation='simulated dataset')
 
 }
 \seealso{
