@@ -47,16 +47,11 @@ source("http://bioconductor.org/biocLite.R")
 biocLite("DASC")
 ```
 
-Please, make sure to that `r CRANpkg("NMF")`, `r CRANpkg("cvxclustr")` and 
-`r Biocpkg("Biobase")` are installed in your system before running 
-`r Biocpkg("DASC")`. Once `r Rpackage("DASC")` is installed, it can be loaded 
-to the R enviornment by the following command.
-
 # Introduction
 
 `r Biocpkg("DASC")` is used for identifying batches and classifying samples 
-into different batches in a high dimensional gene expression dataset. The batch 
-information can be further used as a covariate in conjunction with other 
+into different batches in a high dimensional gene expression dataset. The 
+batch information can be further used as a covariate in conjunction with other 
 variables of interest among standard bioinformatics analysis like differential 
 expression analysis.
 
@@ -86,9 +81,9 @@ dat <- exprs(esGolub)[1:100,samples]
 pdat <- pData(esGolub)[samples,]
 
 ## use nrun = 50 or more for better convergence of results
-res <- convex_batch(edata = dat, pdata = pdat, factor = pdat$Cell, 
-                        method = 'ama', type = 3, lambda = 1, 
-                        rank = 2:3, nrun = 5, annotation="esGolub Dataset")
+res <- DASC(edata = dat, pdata = pdat, factor = pdat$Cell, method = 'ama',
+                type = 3, lambda = 1, rank = 2:3, nrun = 5,
+                annotation="esGolub Dataset")
 #consensusmap(res)
 #plot(res)
 ```
@@ -102,12 +97,13 @@ requires the information for the variable of interest to model the gene
 expression data effectively.Variable of interest could be a genotype or 
 treatment information.
 
-## Stanford Dataset
+## Stanford RNA-Seq Dataset
 
-Below is an example of Stanford dataset (Chen et. al. PNAS, 2015; Gilad et. al. 
-F1000 Research, 2015). Here, we use the filtered raw counts dataset that was 
-published by Gilad et al. F1000 Research. 30% of genes with the lowest 
-expression & mitochondrial genes were removed (Gilad et al.F1000 Research).
+Below is an example of Stanford gene expression dataset (Chen et. al. PNAS, 
+2015; Gilad et. al. F1000 Research, 2015). It is a filtered raw counts dataset 
+which was published by Gilad et al. F1000 Research. 30% of genes with the 
+lowest expression & mitochondrial genes were removed (Gilad et al.F1000 
+Research).
 
 ```{r, message=FALSE, eval=TRUE}
 ## libraries
@@ -155,10 +151,9 @@ differences between the species i.e. samples clustering based on tissues.
 # Batch detection using DASC
 
 ```{r, message=FALSE, eval=TRUE}
-res <- convex_batch(edata = dat, pdata = metadata, 
-                        factor = metadata$tissue, method = 'ama', type = 3, 
-                        lambda = 1, rank = 2:3, nrun = 10, 
-                        annotation = 'Stanford Dataset')
+res <- DASC(edata = dat, pdata = metadata, factor = metadata$tissue,
+                method = 'ama', type = 3, lambda = 1, rank = 2:3, nrun = 10,
+                annotation = 'Stanford Dataset')
 ```
 
 ```{r, message=FALSE, eval=TRUE}
@@ -186,10 +181,6 @@ results suggest that differences in platform led to batch effects. Batch number
 can be used as another covariate, when differential expression analyses using 
 `DESeq2`,`edgeR` or `limma` are performed.
 
-# More Examples
-
-We are currently working on vignette and will be uploading more examples soon.
-    
 # Session Info
 
 ```{r, message=FALSE}

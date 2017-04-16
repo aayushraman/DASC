@@ -7,7 +7,7 @@
 #'
 #' @author Haidong Yi, Ayush T. Raman
 
-my_seeding_method <- function(model, target) {
+Ini_SemiNMF <- function(model, target) {
     N <- ncol(target)
     ans <- kmeans(t(target), nbasis(model))
     G0 <- matrix(0, nrow = N, ncol = nbasis(model))

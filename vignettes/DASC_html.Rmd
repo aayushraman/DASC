@@ -59,11 +59,6 @@ source("http://bioconductor.org/biocLite.R")
 biocLite("DASC")
 ```
 
-Please, make sure to that `r CRANpkg("NMF")`, `r CRANpkg("cvxclustr")` and 
-`r Biocpkg("Biobase")` are installed in your system before running 
-`r Biocpkg("DASC")`. Once `r Rpackage("DASC")` is installed, it can be loaded 
-to the R enviornment by the following command.
-
 # Introduction
 
 `r Biocpkg("DASC")` is used for identifying batches and classifying samples 
@@ -98,7 +93,7 @@ dat <- exprs(esGolub)[1:100,samples]
 pdat <- pData(esGolub)[samples,]
 
 ## use nrun = 50 or more for better convergence of results
-res <- convex_batch(edata = dat, pdata = pdat, factor = pdat$Cell, 
+res <- DASC(edata = dat, pdata = pdat, factor = pdat$Cell, 
                         method = 'ama', type = 3, lambda = 1, 
                         rank = 2:3, nrun = 5, annotation='esGolub Dataset')
 ```
@@ -112,12 +107,13 @@ requires the information for the variable of interest to model the gene
 expression data effectively.Variable of interest could be a genotype or 
 treatment information.
 
-## Stanford Dataset
+## Stanford RNA-Seq Dataset
 
-Below is an example of Stanford dataset (Chen et. al. PNAS, 2015; Gilad et. al. 
-F1000 Research, 2015). Here, we use the filtered raw counts dataset that was 
-published by Gilad et al. F1000 Research. 30% of genes with the lowest 
-expression & mitochondrial genes were removed (Gilad et al.F1000 Research).
+Below is an example of Stanford gene expression dataset (Chen et. al. PNAS, 
+2015; Gilad et. al. F1000 Research, 2015). It is a filtered raw counts dataset 
+which was published by Gilad et al. F1000 Research. 30% of genes with the 
+lowest expression & mitochondrial genes were removed (Gilad et al.F1000 
+Research).
 
 ```{r, message=FALSE, eval=TRUE}
 ## libraries
@@ -165,10 +161,9 @@ differences between the species i.e. samples clustering based on tissues.
 # Batch detection using DASC
 
 ```{r, message=FALSE, eval=TRUE}
-res <- convex_batch(edata = dat, pdata = metadata, 
-                        factor = metadata$tissue, method = 'ama', type = 3, 
-                        lambda = 1, rank = 2:3, nrun = 10, 
-                        annotation = 'Stanford Dataset')
+res <- DASC(edata = dat, pdata = metadata, factor = metadata$tissue,
+                method = 'ama', type = 3, lambda = 1, rank = 2:3, nrun = 10,
+                annotation = 'Stanford Dataset')
 ```
 
 ```{r, message=FALSE, eval=TRUE}
@@ -215,10 +210,10 @@ pcaplot(rld.dds, intgroup=c("tissue","species"), ntop = nrow(rld.dds),
         pcX = 1, pcY = 2)
 
 ## Running DASC
-res <- convex_batch(edata = dat, pdata = metadata, 
-                        factor = metadata$tissue, method = 'ama', type = 3, 
-                        lambda = 1, rank = 2:10, nrun = 100, 
-                        annotation = 'Stanford Dataset')
+res <- DASC(edata = dat, pdata = metadata, factor = metadata$tissue,
+                method = 'ama', type = 3, lambda = 1, rank = 2:10,
+                nrun = 100, annotation = 'Stanford Dataset')
+
 ## Consensus plot
 consensusmap(res)
 
@@ -248,10 +243,6 @@ of library preparation and sequencing of the samples. Another important
 observation, is that at rank equal to 2, we observe entire dataset to cluster 
 based on speicies.
 
-# More Examples
-
-We are currently working on vignette and will be uploading more examples soon.
-    
 # Session Info
 
 ```{r, message=FALSE}

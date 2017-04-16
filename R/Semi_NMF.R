@@ -7,7 +7,7 @@
 #' @return \code{model} the result from the semi-NMF algorithm
 #' @author Haidong Yi, Ayush T. Raman
 
-my_algorithm <- function(target, model, iternum = 100) {
+Semi_NMF <- function(target, model, iternum = 100) {
     n <- 0
     while (TRUE) {
         ans <- t(update_G(target, basis(model), t(coef(model))))
@@ -16,7 +16,7 @@ my_algorithm <- function(target, model, iternum = 100) {
         coef(model) <- ans
         basis(model) <- target %*% t(coef(model)) %*%
                 solve(coef(model) %*% t(coef(model)))
-        if (n > iternum || my_objective_function(model, target) < 0.5)
+        if (n > iternum || Loss_Fro(model, target) < 0.5)
             break
         n <- n + 1
     }
