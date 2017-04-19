@@ -46,9 +46,9 @@ and clustering (DASC)
 Batch factor detection via DASC (Data-adaptive Shrinkage and Clustering-DASC)
 }
 \details{
-The \code{convex_batch} function is the main function of our algorithm DASC
-(Data-adaptive Shrinkage and Clustering-DASC). The DASC includes two main 
-steps
+The \code{DASC} function is the main function of our algorithm DASC
+(Data-adaptive Shrinkage and Clustering-DASC) package. The DASC includes 
+two main steps
 \itemize{ \item Data-adaptive shrinkage using convex clustering shrinkage
 (Implemented by convex optimization.);
 \item Extract batch factors using matrix factorization.
