@@ -8,7 +8,7 @@ Maintainer: Haidong Yi <982869874@qq.com>
 Description: The package is used for identifying batches in high-dimensional 
     dataset.
 Depends: 
-    R (>= 3.3.0),
+    R (>= 3.4.0),
 Imports:
     NMF (>= 0.20.6), 
     cvxclustr (>= 1.1.1),
