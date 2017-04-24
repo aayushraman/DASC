@@ -19,6 +19,10 @@ update_G(X, mf, mg)
 \description{
 Update G in Semi-NMF
 }
+\details{
+By definition, G is a graph adjacency matrix. The \code{update_G} updates G 
+after every iteration.
+}
 \examples{
 X <- matrix(1:12,nrow=4)
 mf <- matrix(1:8,nrow=4)

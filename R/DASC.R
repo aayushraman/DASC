@@ -205,10 +205,10 @@ Sptree <- function(ADJ) {
 #' @author Haidong Yi, Ayush T. Raman
 #' @details
 #'
-#' merge combines two trees into one by attaching the root of one to the root 
-#' of the other. It is a step of the Disjoint-set Algorithm/Union-find 
-#' Algorithm invented by Bernard A. Galler and Michael J. Fischer. The concrete 
-#' details can be found at 
+#' During the traversal of the graph matrix, merge function joins two 
+#' disjoint sets into a single subset. It is a union step of Disjoint-set 
+#' algorithm by Bernard A. Galler and Michael J. Fischer. For further details, 
+#' please refer to: 
 #' \url{https://en.wikipedia.org/wiki/Disjoint-set_data_structure}
 #'
 

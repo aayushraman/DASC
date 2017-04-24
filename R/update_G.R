@@ -4,6 +4,11 @@
 #' @param mf The basis matrix
 #' @param mg The co-efficient matrix
 #' @return \code{G} The basis matrix
+#'
+#' @details
+#' By definition, G is a graph adjacency matrix. The \code{update_G} updates G 
+#' after every iteration.
+#'
 #' @author Haidong Yi, Ayush T. Raman
 #' @export
 #' @examples
