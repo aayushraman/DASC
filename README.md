@@ -25,22 +25,7 @@ R CMD INSTALL DASC_*.tar.gz
 
 For concrete usages, please refer the *.html* vignettes in `inst/doc` file.
 
-## Citation info
+## References:
 
-If you use [DASC](https://academic.oup.com/bioinformatics/article/34/7/1141/4386916) for your analysis, please cite our paper as here below.
-
-```
-@article{Yi2018Detecting,
-    title={Detecting hidden batch factors through data-adaptive adjustment for biological effects},
-    author={Haidong Yi* and
-            Ayush T. Raman* and
-            Han Zhang and
-            Genevera I. Allen and
-            Zhandong Liu},
-    journal={Bioinformatics},
-    volume={34},
-    number={7},
-    pages={1141--1147},
-    year={2018},
-}
-```
+1. Yi H*, Raman AT*, Zhang H, Allen GI, Liu Z. Detecting hidden batch factors through data-adaptive adjustment for biological effects. [Bioinformatics (2018)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6454417/) (PMID: 29617963; PMCID: PMC6454417)
+2. Wang X, Yi H, Wang J, Liu Z, Yin Y, Zhang H. GDASC: a GPU parallel-based web server for detecting hidden batch factors. [Bioinformatics (2020)](https://academic.oup.com/bioinformatics/article/36/14/4211/5835275) (PMID: 32386292)
