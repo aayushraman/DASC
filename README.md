@@ -32,8 +32,8 @@ If you use DASC for your analysis, please cite our paper as here below.
 ```
 @article{Yi2018Detecting,
     title={Detecting hidden batch factors through data-adaptive adjustment for biological effects},
-    author={Haidong Yi and
-            Ayush T. Raman and
+    author={Haidong Yi* and
+            Ayush T. Raman* and
             Han Zhang and
             Genevera I. Allen and
             Zhandong Liu},
