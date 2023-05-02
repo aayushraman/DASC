@@ -27,7 +27,7 @@ For concrete usages, please refer the *.html* vignettes in `inst/doc` file.
 
 ## Citation info
 
-If you use DASC for your analysis, please cite our paper as here below.
+If you use [DASC](https://academic.oup.com/bioinformatics/article/34/7/1141/4386916) for your analysis, please cite our paper as here below.
 
 ```
 @article{Yi2018Detecting,
