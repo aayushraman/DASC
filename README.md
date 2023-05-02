@@ -2,8 +2,6 @@
 
 Detecting hidden batch factors through data adaptive adjustment for biological effects
 
-Status: Travis CI [![Build Status](https://travis-ci.org/aayushraman/DASC.svg?branch=master)](https://travis-ci.org/aayushraman/DASC)
-
 ## Overview
 
 DASC is an R package used for identifying batches and classifying samples into different batches in a high dimensional gene expression dataset. The batch information can be further used as a covariate in conjunction with other variables of interest among standard bioinformatics analysis like differential expression analysis. 
@@ -12,7 +10,7 @@ DASC is an R package used for identifying batches and classifying samples into d
 
 **_Dependencies_**
 
-Before installing the package, please make sure the prerequisite packages described in `DESCRIPTION` file have been installed successfully.
+Before installing the package, please make sure the prerequisite packages described in `DESCRIPTION` file have been installed successfully. For example, [cvxcluster](https://github.com/echi/cvxclustr) needs to be installed from Eric Chi's github repository as it is not available through CRAN database.
 
 To install the DASC package, start the terminal and enter:
 
